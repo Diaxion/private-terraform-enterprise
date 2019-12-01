@@ -3,7 +3,12 @@
 This module preps your Azure subscription for a clustered install.
 This will create a Resource Group, Virtual Network, associated Subnet with Network Security Group attached, as well as a Key Vault.
 
-The only required inputs are a object-id and tenant-id to give access to the key-vault to be able to interact with.
+The required inputs are the `key_vault_object_id`, the `key_vault_tenant_id` and the `application_id` to give access to the key-vault to be able to interact with.
+
+To prepare your Azure subscription for a cluster *PRODUCTION* install you can optionally input:
+
+- postgres DB
+- Storage Account
 
 ## Inputs
 
@@ -27,6 +32,7 @@ The only required inputs are a object-id and tenant-id to give access to the key
 | resource\_group\_name |  |
 | subnet |  |
 | virtual\_network\_name |  |
+
 
 ### Liability
 
