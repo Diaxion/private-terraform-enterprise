@@ -13,3 +13,11 @@ output "subnet" {
 output "key_vault_name" {
   value = "${azurerm_key_vault.new.name}"
 }
+
+output "storage_account_name" {
+  value = "${azurerm_storage_account.new.name}"
+}
+
+output "storage_container_name" {
+  value = "${azurerm_storage_container.new.name}"
+}
