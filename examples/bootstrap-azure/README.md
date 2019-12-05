@@ -7,8 +7,8 @@ The required inputs are the `key_vault_object_id`, the `key_vault_tenant_id` and
 
 To prepare your Azure subscription for a cluster *PRODUCTION* install you can optionally input:
 
-- postgres DB
 - Storage Account
+\#TODO
 
 ## Inputs
 
