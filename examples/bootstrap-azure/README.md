@@ -32,8 +32,10 @@ To prepare your Azure subscription for a cluster *PRODUCTION* install you can op
 | resource\_group\_name |  |
 | subnet |  |
 | virtual\_network\_name |  |
-| storage_account\_name |  |
-| postgresql_server\_name |  |
+| storage\_account\_name |  |
+| storage\_account\_key0 |  |
+| storage\_account\_endpoint |  |
+| storage\_container_name |  |
 
 ### Liability
 

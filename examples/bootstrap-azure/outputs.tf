@@ -18,6 +18,13 @@ output "storage_account_name" {
   value = "${azurerm_storage_account.new.name}"
 }
 
+output "storage_account_key0" {
+  value = "${azurerm_storage_account.new.primary_access_key}"
+}
+
+output "storage_account_endpoint" {
+  value = "${azurerm_storage_account.new.primary_blob_endpoint}"
+}
 output "storage_container_name" {
   value = "${azurerm_storage_container.new.name}"
 }
