@@ -3,7 +3,6 @@
 # A Storage account is required for the TFE Production Mode.
 resource "azurerm_storage_account" "new" {
   name                     = "${local.prefix}sa"
-  #name                     = lower("${local.prefix}sa")
   resource_group_name      = "${azurerm_resource_group.new.name}"
   location                 = "${var.location}"
   account_tier             = "Standard"
@@ -15,7 +14,6 @@ resource "azurerm_storage_account" "new" {
 # We need a blob container.
 resource "azurerm_storage_container" "new" {
   name                     = "${local.prefix}-container"
-  #name                     = lower("${local.prefix}-container")
   resource_group_name      = "${azurerm_resource_group.new.name}"
   storage_account_name     = "${azurerm_storage_account.new.name}"
   container_access_type    = "private"
