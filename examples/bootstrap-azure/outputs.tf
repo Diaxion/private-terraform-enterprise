@@ -15,7 +15,7 @@ output "key_vault_name" {
 }
 
 output "storage_account_name" {
-  value = "${lower(azurerm_storage_account.new.name)}"
+  value = "${azurerm_storage_account.new.name}"
 }
 
 output "storage_account_key0" {
@@ -26,6 +26,6 @@ output "storage_account_endpoint" {
   value = "${azurerm_storage_account.new.primary_blob_endpoint}"
 }
 output "storage_container_name" {
-  value = "${lower(azurerm_storage_container.new.name)}"
+  value = "${azurerm_storage_container.new.name}"
 }
 
