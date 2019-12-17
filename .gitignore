@@ -1,0 +1,19 @@
+#  Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+outfile
+
+# .tfvars files
+*.tfvars
+
+# License files
+*.lic
+
+# Mac files
+.DS_Store
+
+# ignore intellij and pycharm
+.idea
