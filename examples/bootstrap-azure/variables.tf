@@ -26,7 +26,7 @@ variable "additional_tags" {
 
 variable "address_space_allowlist" {
   description = "CIDR block range to use to allow traffic from"
-  default     = "*"
+  default     = "Internet"
 }
 
 variable "key_vault_tenant_id" {
