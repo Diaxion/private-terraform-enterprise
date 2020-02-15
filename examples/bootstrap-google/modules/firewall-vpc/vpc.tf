@@ -6,7 +6,8 @@ resource "google_compute_network" "ptfe_vpc" {
 
 resource "google_compute_subnetwork" "ptfe_subnet" {
   name          = "ptfe-subnet"
-  ip_cidr_range = "${var.subnet_range}"
-  region        = "${var.region}"
-  network       = "${google_compute_network.ptfe_vpc.self_link}"
+  ip_cidr_range = var.subnet_range
+  region        = var.region
+  network       = google_compute_network.ptfe_vpc.self_link
 }
+

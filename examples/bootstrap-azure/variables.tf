@@ -19,7 +19,7 @@ variable "subnet_address_space" {
 }
 
 variable "additional_tags" {
-  type        = "map"
+  type        = map(string)
   description = "A map of additional tags to attach to all resources created."
   default     = {}
 }
@@ -42,20 +42,21 @@ variable "application_id" {
 }
 
 locals {
-  prefix               = "${element(coalescelist(random_pet.prefix.*.id, list(var.prefix)), 0)}"
-  rendered_subnet_cidr = "${coalesce(var.subnet_address_space, var.address_space)}"
+  prefix               = element(coalescelist(random_pet.prefix.*.id, [var.prefix]), 0)
+  rendered_subnet_cidr = coalesce(var.subnet_address_space, var.address_space)
 
   default_tags = {
     Application = "Terraform Enterprise"
     Environment = "Beta-Testing"
   }
 
-  tags = "${merge(local.default_tags, var.additional_tags)}"
+  tags = merge(local.default_tags, var.additional_tags)
 }
 
 resource "random_pet" "prefix" {
-  count     = "${var.prefix == "" ? 1 : 0}"
+  count     = var.prefix == "" ? 1 : 0
   prefix    = "tfe"
   length    = 1
   separator = "-"
 }
+

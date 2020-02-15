@@ -2,7 +2,7 @@ locals {
   namespace         = "${var.namespace}-pes"
   main_namespace    = "${local.namespace}-main"
   standby_namespace = "${local.namespace}-standby"
-  namespaces        = "${list(local.main_namespace, local.standby_namespace)}"
+  namespaces        = [local.main_namespace, local.standby_namespace]
 }
 
 #------------------------------------------------------------------------------
@@ -11,17 +11,17 @@ locals {
 
 resource "azurerm_resource_group" "traffic_manager" {
   name     = "${local.namespace}-traffic-manager-rg"
-  location = "${var.main_location}"
+  location = var.main_location
 }
 
 resource "azurerm_traffic_manager_profile" "ptfe" {
   name                = "${local.namespace}-traffic-manager-profile"
-  resource_group_name = "${azurerm_resource_group.traffic_manager.name}"
+  resource_group_name = azurerm_resource_group.traffic_manager.name
 
   traffic_routing_method = "Priority"
 
   dns_config {
-    relative_name = "${local.namespace}"
+    relative_name = local.namespace
     ttl           = 100
   }
 
@@ -34,19 +34,19 @@ resource "azurerm_traffic_manager_profile" "ptfe" {
 
 resource "azurerm_traffic_manager_endpoint" "main" {
   name                = "${local.main_namespace}-traffic-manager-endpoint"
-  resource_group_name = "${azurerm_resource_group.traffic_manager.name}"
-  profile_name        = "${azurerm_traffic_manager_profile.ptfe.name}"
+  resource_group_name = azurerm_resource_group.traffic_manager.name
+  profile_name        = azurerm_traffic_manager_profile.ptfe.name
   type                = "azureEndpoints"
-  target_resource_id  = "${azurerm_public_ip.main.id}"
+  target_resource_id  = azurerm_public_ip.main.id
   priority            = 1
 }
 
 resource "azurerm_traffic_manager_endpoint" "standby" {
   name                = "${local.standby_namespace}-traffic-manager-endpoint"
-  resource_group_name = "${azurerm_resource_group.traffic_manager.name}"
-  profile_name        = "${azurerm_traffic_manager_profile.ptfe.name}"
+  resource_group_name = azurerm_resource_group.traffic_manager.name
+  profile_name        = azurerm_traffic_manager_profile.ptfe.name
   type                = "azureEndpoints"
-  target_resource_id  = "${azurerm_public_ip.standby.id}"
+  target_resource_id  = azurerm_public_ip.standby.id
   priority            = 2
 }
 
@@ -56,29 +56,29 @@ resource "azurerm_traffic_manager_endpoint" "standby" {
 
 resource "azurerm_public_ip" "main" {
   name                         = "${local.main_namespace}-public_ip"
-  location                     = "${var.main_location}"
-  resource_group_name          = "${var.main_rg_name}"
+  location                     = var.main_location
+  resource_group_name          = var.main_rg_name
   public_ip_address_allocation = "static"
-  domain_name_label            = "${local.main_namespace}"
+  domain_name_label            = local.main_namespace
 }
 
 resource "azurerm_network_interface" "main" {
   name                = "${local.main_namespace}-network_interface"
-  location            = "${var.main_location}"
-  resource_group_name = "${var.main_rg_name}"
+  location            = var.main_location
+  resource_group_name = var.main_rg_name
 
   ip_configuration {
     name                          = "terraform_ip_configuration"
-    subnet_id                     = "${var.main_subnet_id}"
+    subnet_id                     = var.main_subnet_id
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${azurerm_public_ip.main.id}"
+    public_ip_address_id          = azurerm_public_ip.main.id
   }
 }
 
 resource "azurerm_managed_disk" "main" {
   name                 = "${local.main_namespace}-managed_disk"
-  location             = "${var.main_location}"
-  resource_group_name  = "${var.main_rg_name}"
+  location             = var.main_location
+  resource_group_name  = var.main_rg_name
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = "88"
@@ -86,9 +86,9 @@ resource "azurerm_managed_disk" "main" {
 
 resource "azurerm_virtual_machine" "main" {
   name                  = "${local.main_namespace}-vm"
-  location              = "${var.main_location}"
-  resource_group_name   = "${var.main_rg_name}"
-  network_interface_ids = ["${azurerm_network_interface.main.id}"]
+  location              = var.main_location
+  resource_group_name   = var.main_rg_name
+  network_interface_ids = [azurerm_network_interface.main.id]
   vm_size               = "Standard_A0"
 
   delete_os_disk_on_termination    = true
@@ -109,11 +109,11 @@ resource "azurerm_virtual_machine" "main" {
   }
 
   storage_data_disk {
-    name            = "${azurerm_managed_disk.main.name}"
-    managed_disk_id = "${azurerm_managed_disk.main.id}"
+    name            = azurerm_managed_disk.main.name
+    managed_disk_id = azurerm_managed_disk.main.id
     create_option   = "Attach"
     lun             = 1
-    disk_size_gb    = "${azurerm_managed_disk.main.disk_size_gb}"
+    disk_size_gb    = azurerm_managed_disk.main.disk_size_gb
   }
 
   os_profile {
@@ -127,16 +127,16 @@ resource "azurerm_virtual_machine" "main" {
 
     ssh_keys {
       path     = "/home/ptfe/.ssh/authorized_keys"
-      key_data = "${file("~/.ssh/roooms_rsa.pub")}"
+      key_data = file("~/.ssh/roooms_rsa.pub")
     }
   }
 }
 
 resource "azurerm_virtual_machine_extension" "main" {
-  depends_on                 = ["azurerm_virtual_machine.main"]
+  depends_on                 = [azurerm_virtual_machine.main]
   name                       = "CustomScript"
-  location                   = "${var.main_location}"
-  resource_group_name        = "${var.main_rg_name}"
+  location                   = var.main_location
+  resource_group_name        = var.main_rg_name
   virtual_machine_name       = "${local.main_namespace}-vm"
   publisher                  = "Microsoft.Azure.Extensions"
   type                       = "CustomScript"
@@ -148,6 +148,7 @@ resource "azurerm_virtual_machine_extension" "main" {
         "commandToExecute": "sudo bash -c 'apt-get update && apt-get -y install apache2' "
     }
 SETTINGS
+
 }
 
 #------------------------------------------------------------------------------
@@ -156,29 +157,29 @@ SETTINGS
 
 resource "azurerm_public_ip" "standby" {
   name                         = "${local.standby_namespace}-public_ip"
-  location                     = "${var.standby_location}"
-  resource_group_name          = "${var.standby_rg_name}"
+  location                     = var.standby_location
+  resource_group_name          = var.standby_rg_name
   public_ip_address_allocation = "static"
-  domain_name_label            = "${local.standby_namespace}"
+  domain_name_label            = local.standby_namespace
 }
 
 resource "azurerm_network_interface" "standby" {
   name                = "${local.standby_namespace}-network_interface"
-  location            = "${var.standby_location}"
-  resource_group_name = "${var.standby_rg_name}"
+  location            = var.standby_location
+  resource_group_name = var.standby_rg_name
 
   ip_configuration {
     name                          = "terraform_ip_configuration"
-    subnet_id                     = "${var.standby_subnet_id}"
+    subnet_id                     = var.standby_subnet_id
     private_ip_address_allocation = "dynamic"
-    public_ip_address_id          = "${azurerm_public_ip.standby.id}"
+    public_ip_address_id          = azurerm_public_ip.standby.id
   }
 }
 
 resource "azurerm_managed_disk" "standby" {
   name                 = "${local.standby_namespace}-managed_disk"
-  location             = "${var.standby_location}"
-  resource_group_name  = "${var.standby_rg_name}"
+  location             = var.standby_location
+  resource_group_name  = var.standby_rg_name
   storage_account_type = "Standard_LRS"
   create_option        = "Empty"
   disk_size_gb         = "88"
@@ -186,9 +187,9 @@ resource "azurerm_managed_disk" "standby" {
 
 resource "azurerm_virtual_machine" "standby" {
   name                  = "${local.standby_namespace}-vm"
-  location              = "${var.standby_location}"
-  resource_group_name   = "${var.standby_rg_name}"
-  network_interface_ids = ["${azurerm_network_interface.standby.id}"]
+  location              = var.standby_location
+  resource_group_name   = var.standby_rg_name
+  network_interface_ids = [azurerm_network_interface.standby.id]
   vm_size               = "Standard_A0"
 
   delete_os_disk_on_termination    = true
@@ -209,11 +210,11 @@ resource "azurerm_virtual_machine" "standby" {
   }
 
   storage_data_disk {
-    name            = "${azurerm_managed_disk.standby.name}"
-    managed_disk_id = "${azurerm_managed_disk.standby.id}"
+    name            = azurerm_managed_disk.standby.name
+    managed_disk_id = azurerm_managed_disk.standby.id
     create_option   = "Attach"
     lun             = 1
-    disk_size_gb    = "${azurerm_managed_disk.standby.disk_size_gb}"
+    disk_size_gb    = azurerm_managed_disk.standby.disk_size_gb
   }
 
   os_profile {
@@ -227,16 +228,16 @@ resource "azurerm_virtual_machine" "standby" {
 
     ssh_keys {
       path     = "/home/ptfe/.ssh/authorized_keys"
-      key_data = "${file("~/.ssh/roooms_rsa.pub")}"
+      key_data = file("~/.ssh/roooms_rsa.pub")
     }
   }
 }
 
 resource "azurerm_virtual_machine_extension" "standby" {
-  depends_on                 = ["azurerm_virtual_machine.standby"]
+  depends_on                 = [azurerm_virtual_machine.standby]
   name                       = "CustomScript"
-  location                   = "${var.standby_location}"
-  resource_group_name        = "${var.standby_rg_name}"
+  location                   = var.standby_location
+  resource_group_name        = var.standby_rg_name
   virtual_machine_name       = "${local.standby_namespace}-vm"
   publisher                  = "Microsoft.Azure.Extensions"
   type                       = "CustomScript"
@@ -248,13 +249,12 @@ resource "azurerm_virtual_machine_extension" "standby" {
         "commandToExecute": "sudo bash -c 'apt-get update && apt-get -y install apache2' "
     }
 SETTINGS
+
 }
 
 #------------------------------------------------------------------------------
 # virtual machine scale sets
 #------------------------------------------------------------------------------
-
-
 #resource "azurerm_virtual_machine_scale_set" "main" {
 #  name                = "${local.namespace}-main_virtual_machine_scale_set"
 #  location            = "${var.main_location}"
@@ -372,4 +372,3 @@ SETTINGS
 #    }
 #  }
 #}
-

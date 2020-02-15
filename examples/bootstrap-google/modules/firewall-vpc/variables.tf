@@ -1,14 +1,15 @@
 variable "region" {
-  type        = "string"
+  type        = string
   description = "The region to install into."
 }
 
 variable "healthchk_ips" {
-  type        = "list"
+  type        = list(string)
   description = "List of gcp health check ips to allow through the firewall"
 }
 
 variable "subnet_range" {
-  type        = "string"
+  type        = string
   description = "CIDR range for subnet"
 }
+

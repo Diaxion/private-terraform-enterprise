@@ -9,12 +9,12 @@ locals {
 
 resource "azurerm_resource_group" "main" {
   name     = "${local.main_namespace}-rg"
-  location = "${var.main_location}"
+  location = var.main_location
 }
 
 resource "azurerm_resource_group" "standby" {
   name     = "${local.standby_namespace}-rg"
-  location = "${var.standby_location}"
+  location = var.standby_location
 }
 
 #------------------------------------------------------------------------------
@@ -24,8 +24,8 @@ resource "azurerm_resource_group" "standby" {
 resource "azurerm_virtual_network" "main" {
   name                = "${local.main_namespace}-virtual_network"
   address_space       = ["10.0.0.0/16"]
-  location            = "${azurerm_resource_group.main.location}"
-  resource_group_name = "${azurerm_resource_group.main.name}"
+  location            = azurerm_resource_group.main.location
+  resource_group_name = azurerm_resource_group.main.name
 
   subnet {
     name           = "${local.main_namespace}-subnet"
@@ -36,8 +36,8 @@ resource "azurerm_virtual_network" "main" {
 resource "azurerm_virtual_network" "standby" {
   name                = "${local.standby_namespace}-virtual_network"
   address_space       = ["11.0.0.0/16"]
-  location            = "${azurerm_resource_group.standby.location}"
-  resource_group_name = "${azurerm_resource_group.standby.name}"
+  location            = azurerm_resource_group.standby.location
+  resource_group_name = azurerm_resource_group.standby.name
 
   subnet {
     name           = "${local.standby_namespace}-subnet"
@@ -56,3 +56,4 @@ data "azurerm_subnet" "standby" {
   virtual_network_name = "${local.standby_namespace}-virtual_network"
   resource_group_name  = "${local.standby_namespace}-rg"
 }
+

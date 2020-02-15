@@ -4,25 +4,25 @@ variable "cidr_block" {
 }
 
 variable "public_subnet_cidr_blocks" {
-  type        = "list"
+  type        = list(string)
   description = "CIDR block ranges to use for the public subnets."
   default     = ["10.0.21.0/24", "10.0.22.0/24", "10.0.23.0/24"]
 }
 
 variable "private_subnet_cidr_blocks" {
-  type        = "list"
+  type        = list(string)
   description = "CIDR block ranges to use for the private subnets."
   default     = ["10.0.11.0/24", "10.0.12.0/24", "10.0.13.0/24"]
 }
 
 variable "additional_tags" {
-  type        = "map"
+  type        = map(string)
   description = "A map of additional tags to attach to all resources created."
   default     = {}
 }
 
 variable "availability_zones" {
-  type        = "list"
+  type        = list(string)
   description = "List of the Availability zones to use."
   default     = ["us-east-2a", "us-east-2b", "us-east-2c"]
 }
@@ -38,11 +38,12 @@ variable "prefix" {
 }
 
 locals {
-  prefix = "${element(coalescelist(list(var.prefix), random_pet.prefix.*.id), 0)}"
-  tags   = "${merge(local.default_tags, var.additional_tags)}"
+  prefix = element(coalescelist([var.prefix], random_pet.prefix.*.id), 0)
+  tags   = merge(local.default_tags, var.additional_tags)
 
   default_tags = {
     Application = "Terraform Enterprise"
     Environment = "Beta-Testing"
   }
 }
+

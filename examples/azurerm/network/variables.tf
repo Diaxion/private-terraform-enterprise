@@ -1,3 +1,9 @@
-variable "namespace" {}
-variable "main_location" {}
-variable "standby_location" {}
+variable "namespace" {
+}
+
+variable "main_location" {
+}
+
+variable "standby_location" {
+}
+
