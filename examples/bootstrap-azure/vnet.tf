@@ -21,6 +21,7 @@ resource "azurerm_subnet" "new" {
 
   service_endpoints = [
     "Microsoft.KeyVault",
+    "Microsoft.Sql",
   ]
 }
 
