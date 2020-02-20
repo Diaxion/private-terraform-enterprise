@@ -12,6 +12,14 @@ resource "azurerm_key_vault" "new" {
   enabled_for_deployment          = true
   enabled_for_template_deployment = true
 
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      tags,
+    ]
+  }
+
   access_policy {
     tenant_id = data.azurerm_client_config.current.tenant_id # access policy for the current signed in user building the vault.
 

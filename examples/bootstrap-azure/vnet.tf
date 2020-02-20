@@ -2,6 +2,14 @@ resource "azurerm_resource_group" "new" {
   name     = "${local.prefix}-rg"
   location = var.location
   tags     = local.tags
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      tags,
+    ]
+  }
 }
 
 resource "azurerm_virtual_network" "new" {
@@ -10,6 +18,14 @@ resource "azurerm_virtual_network" "new" {
   location            = var.location
   address_space       = [var.address_space]
   tags                = local.tags
+
+  lifecycle {
+    ignore_changes = [
+      # Ignore changes to tags, e.g. because a management agent
+      # updates these based on some ruleset managed elsewhere.
+      tags,
+    ]
+  }
 }
 
 resource "azurerm_subnet" "new" {

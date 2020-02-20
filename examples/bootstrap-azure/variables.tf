@@ -46,8 +46,7 @@ locals {
   rendered_subnet_cidr = coalesce(var.subnet_address_space, var.address_space)
 
   default_tags = {
-    Application = "Terraform Enterprise"
-    Environment = "Beta-Testing"
+    module = "private-terraform-enterprise"
   }
 
   tags = merge(local.default_tags, var.additional_tags)

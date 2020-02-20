@@ -42,8 +42,7 @@ locals {
   tags   = merge(local.default_tags, var.additional_tags)
 
   default_tags = {
-    Application = "Terraform Enterprise"
-    Environment = "Beta-Testing"
+    module = "private-terraform-enterprise"
   }
 }
 
