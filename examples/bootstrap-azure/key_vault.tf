@@ -20,10 +20,10 @@ resource "azurerm_key_vault" "new" {
     ]
   }
 
+  # access policy for the current signed in user building the vault.
   access_policy {
-    tenant_id = data.azurerm_client_config.current.tenant_id # access policy for the current signed in user building the vault.
-
-    object_id = data.azurerm_client_config.current.service_principal_object_id
+    tenant_id = data.azurerm_client_config.current.tenant_id
+    object_id = data.azurerm_client_config.current.object_id
     key_permissions = [
       "backup",
       "create",
