@@ -38,9 +38,3 @@ resource "azurerm_subnet" "new" {
     "Microsoft.KeyVault",
   ]
 }
-
-resource "azurerm_subnet_network_security_group_association" "new" {
-  subnet_id                 = azurerm_subnet.new.id
-  network_security_group_id = azurerm_network_security_group.new.id
-}
-
