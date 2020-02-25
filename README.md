@@ -4,10 +4,14 @@ Please note, that this repository may contain a sample of a code, which is used 
 
 ## Diaxion Customisation Notes
 
-### Branch develop/012upgrade
+### Branch `012upgrade`
 
-The follow changes are in the branch named `develop/012upgrade`
+The following changes are in the branch named `012upgrade`
 
-* Contains module code updated for Terraform 0.12.
-* The Azure VNET has a Service Endpoint for `Microsoft.Sql` enabled in it.
+* Contains updates to the Azure bootstrap module to allow it to work with terraform 0.12.x
 
+### Branch `provider2.0`
+
+The following changes are in the branch named `provider2.0`
+
+* Contains updates to the Azure bootstrap module to allow it to work with Azure Provider 2.0
